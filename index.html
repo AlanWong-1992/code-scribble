@@ -1,0 +1,350 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="content-type" content="text/html" />
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+	<title>CodePlayer</title>
+	
+	<style type="text/css">
+	
+		/*
+		*****************
+		* General Settings
+		*****************
+		*/
+		
+		body,html{
+			width:100%;
+			height:100%;
+			font-family:helvetica, sans-serif;
+			margin:0;
+			padding:none;
+		}	
+	
+		#wrapper{
+			width:1204px;	
+			height:100%;
+			margin: 0 auto;
+		}
+			
+		.clear{
+			clear:both;
+		}
+		
+		li{
+			float:normal;
+		}
+		
+		/*
+		*****************
+		*=Header
+		*****************
+		*/
+		#header{
+			color:#F15A21;
+			margin:18px 10px 0 10px;
+		}
+		#topMenuBar{
+			background:#004050;
+			width:100%;
+			height:13%;
+		}
+		
+		#topMenuBar h1, ul, .langNavBar, form{
+			float:left;
+		}
+		
+		#topMenuBar ul{
+			list-style:none;
+			position:relative;
+			left:25%;
+			top:1%;
+			padding:0;
+			border-radius:5px;
+			margin-bottom:0px;
+
+
+		}
+		
+		#topMenuBar li{
+			padding:0;
+			border:1px solid gray;
+		}
+		
+		#topMenuBar li button{
+			padding:10px;
+			border:0;
+		}
+		
+		#runButton{
+			list-style:none;
+			position: relative;
+			left:60%;
+			top:35%;
+			padding:5px;
+			background:white;
+			border:1px;
+		}
+		
+		/*
+		*****************
+		* =Main
+		*****************
+		*/
+		#main{
+			background:white;
+			width:100%;
+			height:100%;
+			overflow:hidden;
+		}
+		
+		#blank{
+			float:left
+			height:100%;
+		}
+		#html_win, #css_win, #js_win, #result_win{
+			width:50%;
+			height:100%;
+			float:left;
+			background:white;
+			outline: 1px solid gray;
+			
+		}
+		
+
+		.unselected{
+			display:none;
+		}
+		
+		.selected{
+			display:normal;
+			background:palegoldenrod;
+		}
+
+		.on{
+			background:white;
+		}
+		
+		.off{
+			background:#dce3e5;
+		}
+		#main div{
+			position:relative;
+		}
+		
+		
+		#main div .codeHeaders{
+			position:absolute;
+			left:80%;
+			font-size: 0.5em;
+			font-weight:normal;
+			padding:3px;
+			border: 1px solid #303030;
+			border-radius: 8%;
+			margin-right:10px;
+		}
+		
+		textarea{
+			width:96%;
+			height:100%;
+			border:none;
+			padding:28px 2% 0 2%;
+			outline:none;
+		}
+		
+	
+
+	</style>
+	
+	
+</head>
+<body>
+	<div id="wrapper">
+		<div id="topMenuBar">
+			<h1 id="header">CodeScribble</h1>
+			<ul>
+				<li class="langNavBar"><button type="button" id="html_button" class="on">HTML</button></li>
+				<li class="langNavBar"><button type="button" id="css_button" class="off">CSS</button></li>
+				<li class="langNavBar"><button type="button" id="js_button" class="off">JS</button></li>
+				<li class="langNavBar"><button type="button" id="result_button" class="on">Result</button></li>
+			</ul>
+			<button type="button" id="runButton">Run</button>
+		</div>
+		
+		<div id="main" class="clear">
+			<div id="blank">
+			</div>
+			<div id="html_win" class="selected">
+				<h2 class="codeHeaders">HTML</h2>
+				<textarea name="html" id="htmlTextArea"></textarea>
+			</div>
+			<div id="css_win" class="unselected">
+				<h2 class="codeHeaders">CSS</h2>
+				<textarea name="css" id="cssTextArea"></textarea>
+			</div>
+			<div id="js_win" class="unselected">
+				<h2 class="codeHeaders">Javascript</h2>
+				<textarea name="js" id="jsTextArea"></textarea>
+			</div>
+			<div id="result_win" class="selected">
+				<h2 class="codeHeaders">Result</h2>
+
+				
+			</div>
+		</div>
+
+	</div>
+	
+	<script type="text/javascript">
+	
+		/*Folowing variables are used to display the windows.
+		True means that the window will be shown and False means that the window will be hidden*/
+
+		var htmlSelect = true;
+		var cssSelect = false;
+		var jsSelect = false;
+		var resultSelect = true;
+		var wndwCount = 2 //default number of windows initially
+		
+		function windowSizer(p1, p2, p3, p4){
+			/*counts number of selected windows and calculates the width for each*
+			window*/
+			
+			var numWndws=0
+			if(p1){
+				numWndws+=1;
+			}
+			if(p2){
+				numWndws+=1;
+			}
+			if(p3){
+				numWndws+=1;
+			}
+			if(p4){
+				numWndws+=1;
+			}
+			wndwCount = numWndws;
+			windowWidth=(1/numWndws * 100)+"%";
+			return windowWidth;
+		}
+		function updateWindowSize(){ 
+			/*updates width of window to all selected window types*/
+			p1 = windowSizer(htmlSelect, cssSelect, jsSelect, resultSelect);
+			document.getElementById("html_win").style.width=p1;
+			document.getElementById("css_win").style.width=p1;
+			document.getElementById("js_win").style.width=p1;
+			document.getElementById("result_win").style.width=p1;
+		}
+		
+		
+		document.getElementById("html_button").onclick=function(){
+			/*the event for when the HTML button is clicked*/
+
+			htmlSelect= !(htmlSelect);
+			window_size = updateWindowSize();
+			if(htmlSelect){
+				var windowWidth = windowSizer(htmlSelect, cssSelect, jsSelect, resultSelect);
+				var codeType=document.getElementById("html_win");
+				var button=document.getElementById("html_button");
+				codeType.style.width = window_size; //adjusts width of window
+				codeType.className="selected";	//adjusts class of window to selected
+				button.className="on";	//adjusts button to on so background color changes
+			} else {
+				var wndwWidth = windowSizer(htmlSelect, cssSelect, jsSelect, resultSelect);
+				var codeType=document.getElementById("html_win");
+				var button=document.getElementById("html_button");
+				codeType.className="unselected";
+				button.className="off";
+			}
+		}
+		
+		document.getElementById("css_button").onclick=function(){
+			/*the event for when the css button is clicked*/
+			
+			cssSelect= !(cssSelect);
+			window_size = updateWindowSize();
+			if(cssSelect){
+				var wndwWidth = windowSizer(htmlSelect, cssSelect, jsSelect, resultSelect);
+				var codeType=document.getElementById("css_win");
+				var button=document.getElementById("css_button");
+				codeType.style.width=window_size;
+				codeType.className="selected";
+				button.className="on";
+				codeType.style.width=(1/wndwWidth * 100)+"%";
+			} else {
+				var wndwWidth = windowSizer(htmlSelect, cssSelect, jsSelect, resultSelect);
+				var codeType=document.getElementById("css_win");
+				var button=document.getElementById("css_button");
+				codeType.style.width=window_size;
+				codeType.className="unselected";
+				button.className="off";	
+			}
+		}
+		
+		document.getElementById("js_button").onclick=function(){
+			/*the event for when the JavaScript button is clicked*/
+			jsSelect= !(jsSelect);
+			window_size = updateWindowSize();
+			if(jsSelect){
+				var windowWidth = windowSizer(htmlSelect, cssSelect, jsSelect, resultSelect);
+				var codeType=document.getElementById("js_win");
+				var button=document.getElementById("js_button");
+				codeType.style.width = window_size; //adjusts width of window
+				codeType.className="selected";	//adjusts class of window to selected
+				button.className="on";	//adjusts button to on so background color changes
+			} else {
+				var wndwWidth = windowSizer(htmlSelect, cssSelect, jsSelect, resultSelect);
+				var codeType=document.getElementById("js_win");
+				var button=document.getElementById("js_button");
+				codeType.className="unselected";
+				button.className="off";
+			}
+		}
+		
+		document.getElementById("result_button").onclick=function(){
+			/*the event for when the Result button is clicked*/
+			resultSelect= !(resultSelect);
+			window_size = updateWindowSize();
+			if(resultSelect){
+				var windowWidth = windowSizer(htmlSelect, cssSelect, jsSelect, resultSelect);
+				var codeType=document.getElementById("result_win");
+				var button=document.getElementById("result_button");
+				codeType.style.width = window_size; //adjusts width of window
+				codeType.className="selected";	//adjusts class of window to selected
+				button.className="on";	//adjusts button to on so background color changes
+			} else {
+				var wndwWidth = windowSizer(htmlSelect, cssSelect, jsSelect, resultSelect);
+				var codeType=document.getElementById("result_win");
+				var button=document.getElementById("result_button");
+				codeType.className="unselected";
+				button.className="off";
+			}
+		}
+			
+		/*The following code gets text from the TextArea of each window*/
+		
+		document.getElementById("runButton").onclick=function(){
+			var htmlText = document.getElementById("htmlTextArea").value;
+
+			var cssText = document.getElementById("cssTextArea").value;
+			var stylecssText = "<style>"+cssText+" </style>";
+			
+				
+			document.getElementById("result_win").innerHTML=stylecssText + htmlText;
+			var jsText=document.getElementById("jsTextArea").value;
+			var script = document.createElement("script");
+			script.type="text/javascript";
+			script.text=jsText;
+			var position=document.getElementById("result_win");
+			position.appendChild(script);
+			
+		}
+			
+
+	</script>
+</body>
+</html>
